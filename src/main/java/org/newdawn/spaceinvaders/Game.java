@@ -118,7 +118,7 @@ public class Game extends Canvas {
 	 * create a new set.
 	 */
 	private void startGame() {
-		// clear out any existing entities and intialise a new set
+		// clear out any existing entities and initialize a new set
 		entities.clear();
 		initEntities();
 		
@@ -130,11 +130,13 @@ public class Game extends Canvas {
 	
 	/**
 	 * Initialise the starting state of the entities (ship and aliens). Each
-	 * entitiy will be added to the overall list of entities in the game.
+	 * entity will be added to the overall list of entities in the game.
 	 */
 	private void initEntities() {
 		// create the player ship and place it roughly in the center of the screen
 		ship = new ShipEntity(this,"sprites/ship.gif",370,550);
+		entities.add(ship);
+		ship = new ShipEntity(this,"sprites/ship.gif",30,550);
 		entities.add(ship);
 		
 		// create a block of aliens (5 rows, by 12 aliens, spaced evenly)
@@ -188,7 +190,7 @@ public class Game extends Canvas {
 	 * Notification that an alien has been killed
 	 */
 	public void notifyAlienKilled() {
-		// reduce the alient count, if there are none left, the player has won!
+		// reduce the alien count, if there are none left, the player has won!
 		alienCount--;
 		
 		if (alienCount == 0) {
@@ -197,9 +199,7 @@ public class Game extends Canvas {
 		
 		// if there are still some aliens left then they all need to get faster, so
 		// speed up all the existing aliens
-		for (int i=0;i<entities.size();i++) {
-			Entity entity = (Entity) entities.get(i);
-			
+        for (Entity entity : entities) {
 			if (entity instanceof AlienEntity) {
 				// speed up by 2%
 				entity.setHorizontalMovement(entity.getHorizontalMovement() * 1.02);
@@ -235,7 +235,7 @@ public class Game extends Canvas {
 	 * - Checking Input
 	 * <p>
 	 */
-	public void gameLoop() {
+	private void gameLoop() {
 		long lastLoopTime = System.currentTimeMillis();
 		
 		// keep looping round til the game ends
@@ -254,17 +254,13 @@ public class Game extends Canvas {
 			
 			// cycle round asking each entity to move itself
 			if (!waitingForKeyPress) {
-				for (int i=0;i<entities.size();i++) {
-					Entity entity = (Entity) entities.get(i);
-					
+				for (Entity entity : entities) {
 					entity.move(delta);
 				}
 			}
 			
 			// cycle round drawing all the entities we have in the game
-			for (int i=0;i<entities.size();i++) {
-				Entity entity = (Entity) entities.get(i);
-				
+            for (Entity entity : entities) {
 				entity.draw(g);
 			}
 			
@@ -273,8 +269,8 @@ public class Game extends Canvas {
 			// both entities that the collision has occured
 			for (int p=0;p<entities.size();p++) {
 				for (int s=p+1;s<entities.size();s++) {
-					Entity me = (Entity) entities.get(p);
-					Entity him = (Entity) entities.get(s);
+					Entity me = entities.get(p);
+					Entity him = entities.get(s);
 					
 					if (me.collidesWith(him)) {
 						me.collidedWith(him);
@@ -291,8 +287,7 @@ public class Game extends Canvas {
 			// be resolved, cycle round every entity requesting that
 			// their personal logic should be considered.
 			if (logicRequiredThisLoop) {
-				for (int i=0;i<entities.size();i++) {
-					Entity entity = (Entity) entities.get(i);
+                for (Entity entity : entities) {
 					entity.doLogic();
 				}
 				
